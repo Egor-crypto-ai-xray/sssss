@@ -1,11 +1,13 @@
 FROM alpine:latest
 
-# Устанавливаем зависимости
-RUN apk add --no-cache ca-certificates wget gcompat
+# Устанавливаем библиотеку совместимости
+RUN apk add --no-cache gcompat ca-certificates
 
-# Скачиваем готовый бинарник сервера версии 1.3
-RUN wget https://github.com/jaykaiperson/lionheart/releases/download/v1.3/lionheart-1.3-linux-amd64 -O /lionheart && \
-    chmod +x /lionheart
+# Просто копируем файл, который ты только что загрузил в GitHub
+COPY lionheart-1.3-linux-amd64 /lionheart
 
-# Запуск (Railway сам подставит порт в переменную $PORT)
+# Даем права
+RUN chmod +x /lionheart
+
+# Запуск
 CMD /lionheart -server -listen :$PORT -forward 127.0.0.1:8080 -smart-key ${SMART_KEY:-default}
